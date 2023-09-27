@@ -1,0 +1,19 @@
+{
+    "name": "xflow",
+    "version": "0.1.0",
+    "scripts": {
+        "start": "webpack serve"
+    },
+    "author": "blong",
+    "devDependencies": {
+        "jquery": "^3.7.1",
+        "ts-loader": "^9.4.4",
+        "typescript": "^5.2.2",
+        "webpack": "^5.88.2",
+        "webpack-cli": "^5.1.4",
+        "webpack-dev-server": "^4.15.1"
+    },
+    "dependencies": {
+        "bootstrap": "^5.3.2"
+    }
+}
