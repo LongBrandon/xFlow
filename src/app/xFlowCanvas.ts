@@ -107,7 +107,7 @@ export class xFlowCanvas{
         ctx.clearRect(0,0, this._canvas.width,canvas.height);
         
         
-        ctx.fillText(this._debugString, 10,10);
+        ctx.fillText(this._camera.DebugString, 10,10);
         ctx.fillText(this._debugString2, 10,30);
 
         this._camera.transformCanvasContext(ctx);
@@ -144,7 +144,7 @@ export class xFlowCanvas{
 
         // draw all the nodes
         this._flowNodes.forEach(function (value){
-            value.drawFlowchardElement(ctx!);
+            value.drawFlowchartElement(ctx!);
         });
     }
 

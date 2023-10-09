@@ -86,7 +86,6 @@ export class RectNode{
         if(this._isMoving)
         {
             this._isMoving = false;
-            //this._debugString = "shape is not moving";
         }
     }
 
@@ -97,11 +96,9 @@ export class RectNode{
 
         this._locationX = relMouseX - this._clickOffsetX;
         this._locationY = relMouseY - this._clickOffestY;
-
-        //this._debugString = "mouse move while moving";
     }
 
-    drawFlowchardElement(canvasCtx: CanvasRenderingContext2D) : void
+    drawFlowchartElement(canvasCtx: CanvasRenderingContext2D) : void
     {
 
         canvasCtx.beginPath();
@@ -127,10 +124,6 @@ export class RectNode{
         }
 
         canvasCtx.fillText(this._title, tileLocX, titleLocY); // for testing only
-
-        canvasCtx.font = "8pt Calibri";
-        this._debugString = this.locationX.toString() + " " + this.locationY.toString();
-        canvasCtx.fillText(this._debugString, this.locationX, this.locationY); 
     }
 
    

@@ -61,19 +61,42 @@ export class Camera{
         this.MouseCamLocationX = ((evt.clientX - this.canvasRect.left) / this.Zoom) - this.PanOffsetX;
         this.MouseCamLocationY = ((evt.clientY - this.canvasRect.top) / this.Zoom) - this.PanOffsetY;
 
+        this.DebugString = `"In mouse move: ${this.PanOffsetX}, ${this.PanOffsetY}"`;
+
         if(this._isPanning)
         {
             // adjust the pan location with the mouse location
             this._currentPanOffsetX = this.MouseCamLocationX  - this._panStartX;
             this._currentPanOffsetY = this.MouseCamLocationY - this._panStartY
+
+            this.DebugString += `" +++ In mouse panning: ${this._currentPanOffsetX}, ${this._currentPanOffsetY}"`;
+            this.DebugString += `" --- panstart ${this._panStartX}, ${this._panStartY}"`;
         }
     }
 
     HandleMouseWheel(evt: WheelEvent)
     {
-        var wheel = evt.deltaY/120;//n or -n
+        // get the current location of the mouse,
+        // we want to move to this location after zooming
+        let mouseLocationX = this.MouseCamLocationX;
+        let mouseLocationY = this.MouseCamLocationY;
+
+        this.DebugString = `"In mouse wheel before zoom: ${mouseLocationX}, ${mouseLocationY}"`;
+
+        var wheel = evt.deltaY / 120; //n or -n
         wheel = wheel * -1;
         this.Zoom *= Math.pow(1 + Math.abs(wheel)/2 , wheel > 0 ? 1 : -1);
+
+        // correct mouse locations after zoom
+        this.MouseCamLocationX = ((evt.clientX - this.canvasRect.left) / this.Zoom) - this.PanOffsetX;
+        this.MouseCamLocationY = ((evt.clientY - this.canvasRect.top) / this.Zoom) - this.PanOffsetY;
+
+        this.PanOffsetX -= mouseLocationX - this.MouseCamLocationX;
+        this.PanOffsetY -= mouseLocationY - this.MouseCamLocationY;
+
+        // update mouse location after offset
+        this.MouseCamLocationX = ((evt.clientX - this.canvasRect.left) / this.Zoom) - this.PanOffsetX;
+        this.MouseCamLocationY = ((evt.clientY - this.canvasRect.top) / this.Zoom) - this.PanOffsetY;
     }
 
     increaseZoom(): void
