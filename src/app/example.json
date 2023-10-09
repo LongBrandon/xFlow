@@ -1,0 +1,61 @@
+[
+    {
+        "title": "Brandon Long",
+        "id": "1234",
+        "parentIds":[
+            "4567",
+            "3456"
+        ],
+        "color": "lightGreen",
+        "radii": 180
+    },
+    {
+        "title": "Larry Monroe",
+        "id": "2345",
+        "parentIds":[
+            "4567",
+            "7777"
+        ],
+        "color": "lightblue",
+        "radii": 180
+    },
+    {
+        "title": "Test Group",
+        "id": "3456",
+        "parentIds":[
+            "7777"
+        ],
+        "color": "purple",
+        "radii": 10
+    },
+    {
+        "title": "Everyone Group",
+        "id": "4567",
+        "parentIds":[
+
+        ],
+        "color": "lightYellow",
+        "radii": 10
+    },
+    {
+        "title": "Cool Guys Group",
+        "id": "7777",
+        "parentIds":[
+
+        ],
+        "color": "cyan",
+        "radii": 10
+    },
+    {
+        "title": "Lonely Guy",
+        "id": "9999",
+        "parentIds":[
+            "9999"
+        ],
+        "color": "lightYellow",
+        "radii": 10
+    }
+
+
+
+]
