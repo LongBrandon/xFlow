@@ -61,16 +61,11 @@ export class Camera{
         this.MouseCamLocationX = ((evt.clientX - this.canvasRect.left) / this.Zoom) - this.PanOffsetX;
         this.MouseCamLocationY = ((evt.clientY - this.canvasRect.top) / this.Zoom) - this.PanOffsetY;
 
-        this.DebugString = `"In mouse move: ${this.PanOffsetX}, ${this.PanOffsetY}"`;
-
         if(this._isPanning)
         {
             // adjust the pan location with the mouse location
             this._currentPanOffsetX = this.MouseCamLocationX  - this._panStartX;
             this._currentPanOffsetY = this.MouseCamLocationY - this._panStartY
-
-            this.DebugString += `" +++ In mouse panning: ${this._currentPanOffsetX}, ${this._currentPanOffsetY}"`;
-            this.DebugString += `" --- panstart ${this._panStartX}, ${this._panStartY}"`;
         }
     }
 
@@ -80,8 +75,6 @@ export class Camera{
         // we want to move to this location after zooming
         let mouseLocationX = this.MouseCamLocationX;
         let mouseLocationY = this.MouseCamLocationY;
-
-        this.DebugString = `"In mouse wheel before zoom: ${mouseLocationX}, ${mouseLocationY}"`;
 
         var wheel = evt.deltaY / 120; //n or -n
         wheel = wheel * -1;

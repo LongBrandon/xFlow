@@ -5,6 +5,8 @@ import { NodeDefinition } from "./NodeDefinition";
 
 export class xFlowCanvas{
 
+    public nodeActionButtonClicked?: (nodeId: string) => void
+
     private canvasRect: DOMRect;
     private _flowNodes: Array<RectNode> = [];
     private _camera : Camera
@@ -14,6 +16,10 @@ export class xFlowCanvas{
 
     private _canvas : HTMLCanvasElement;
 
+    private _layoutColumnWidth = 200;
+    private _layoutRowHeight = 150;
+
+    private _currentLayoutRow = 0;
 
     constructor(canvas: HTMLCanvasElement) {
         this._canvas = canvas;
@@ -28,22 +34,104 @@ export class xFlowCanvas{
 
     start(nodeDefinitions: Array<NodeDefinition>) : void
     {
-        // just for testing
-        let row = 0;
-        let column = 0;
-        for(let i = 0; i<nodeDefinitions.length; i ++)
+        //this.performLayout(nodeDefinitions);
+        this.performLayout(nodeDefinitions);
+
+        // attach click event for each node action button
+        this._flowNodes.forEach(fn => {
+            fn.actionButtonClicked = (id) => this.HandleNodeActionButtonClick(id);
+        });
+        this.loop();
+    }
+
+    private HandleNodeActionButtonClick(nodeID: string) {
+
+        if (!this.nodeActionButtonClicked)
         {
-            column ++;
-            if(i % 15 == 0)
+            return;
+        }
+        this.nodeActionButtonClicked(nodeID)
+    }
+
+    private performLayout(nodeDefinitions: Array<NodeDefinition>)
+    {
+        var topLevelNodes = nodeDefinitions.filter(function(fn){ return fn.parentIds == null || fn.parentIds.length == 0 || fn.parentIds[0] == fn.id })
+
+        if(topLevelNodes != undefined && topLevelNodes.length > 0)
+        {
+            topLevelNodes.forEach(topNode => {
+                topNode.layoutRow = 0;
+            });
+        }
+        else
+        {
+            // if we cant find any without parents, then we sort to find the ones with the least amount of parents
+            let length = nodeDefinitions.sort((a,b) => a.parentIds.length - b.parentIds.length)[1].parentIds.length;
+            topLevelNodes = nodeDefinitions.filter(function(fn){ return fn.parentIds.length ==  length})
+
+            topLevelNodes.forEach(topNode => {
+                topNode.layoutRow = 0;
+            });
+        }
+        let lastRow = 0;
+        // loop until we put a row number on all elements
+        while(nodeDefinitions.some(nd => nd.layoutRow === undefined))
+        {
+            var foundItems = nodeDefinitions.filter(function(nd){ return nd.layoutRow != undefined })
+            // var remainingNodeDefs = nodeDefinitions.filter(function(fn){ return fn.layoutRow === undefined && fn.parentIds.includes(parentItem.id) })
+
+            // first check if there are any items with only a single parent
+            for(let k in foundItems)
             {
-                row++
-                column = 0;
+                var parentItem = foundItems[k];
+                var remainingNodeDefs = nodeDefinitions.filter(function(fn){ return fn.layoutRow === undefined && fn.parentIds.includes(parentItem.id) })
+
+                if(remainingNodeDefs.some(rn => rn.parentIds.length === 1))
+                {
+                    var singleLevelNodeDefs = remainingNodeDefs.filter(function(fn){ return fn.parentIds.length == 1 })
+                    singleLevelNodeDefs.forEach(slNode => {
+                        slNode.layoutRow = lastRow + 1;
+                    });
+                    lastRow ++;
+                    break;
+                }
             }
 
-            this._flowNodes.push(new RectNode(nodeDefinitions[i].id, nodeDefinitions[i].parentIds, column * 100, row * 100,  nodeDefinitions[i].title, nodeDefinitions[i].color, nodeDefinitions[i].radii, this._camera));
+            // now process the remaining items
+            for(let k in foundItems)
+            {
+                var parentItem = foundItems[k];
+                var remainingNodeDefs = nodeDefinitions.filter(function(fn){ return fn.layoutRow === undefined && fn.parentIds.includes(parentItem.id) })
+
+                remainingNodeDefs.forEach(rn => { 
+                    rn.layoutRow = lastRow + 1;
+                })
+            }
+
+            lastRow ++;
         }
 
-        this.loop();
+        let marginLeft = 50;
+        let marginTop = 50;
+
+        for(let i = 0; i <= lastRow; i++)
+        {
+            if(i % 2 === 0)
+            {
+                marginLeft = 50;
+            }
+            else
+            {
+                marginLeft = 100;
+            }
+
+            var rowNodes = nodeDefinitions.filter(function(nd){ return nd.layoutRow === i })
+            let column = 0;
+            rowNodes.forEach(rn => {
+                this._flowNodes.push(new RectNode(rn.id, rn.parentIds, column * this._layoutColumnWidth + marginLeft, i * this._layoutRowHeight + marginTop,  rn.title, rn.color, rn.radii, this._camera, rn.enableActionButton));
+                column++;
+            });
+        }
     }
 
     private loop = () => {
@@ -106,9 +194,9 @@ export class xFlowCanvas{
 
         ctx.clearRect(0,0, this._canvas.width,canvas.height);
         
-        
-        ctx.fillText(this._camera.DebugString, 10,10);
-        ctx.fillText(this._debugString2, 10,30);
+        // ctx.fillText(this._camera.DebugString, 10,10);
+        // ctx.fillText(this._debugString, 10,10);
+        // ctx.fillText(this._debugString2, 10,30);
 
         this._camera.transformCanvasContext(ctx);
         
@@ -124,7 +212,7 @@ export class xFlowCanvas{
                     if(ctx == null)
                         return;
 
-                    var intersectPoint = this.GetNodeIntersectionPoint(parentNode?.centerX, parentNode?.centerY, new DOMRect(node.locationX, node.locationY, node._width, node._height));
+                    var intersectPoint = this.GetNodeIntersectionPoint(parentNode?.centerX, parentNode?.centerY, new DOMRect(node.locationX, node.locationY, node.width, node.height));
                     ctx?.beginPath();
                     ctx?.moveTo(parentNode?.centerX, parentNode?.centerY);
                     ctx?.lineTo(intersectPoint.x, intersectPoint.y);
@@ -133,7 +221,7 @@ export class xFlowCanvas{
                     // as a pointer, draw a circle at the end of the line
                     ctx.beginPath();
                     ctx.arc(intersectPoint.x, intersectPoint.y, 10, 0, 2 * Math.PI, false);
-                    ctx.fillStyle = 'green';
+                    ctx.fillStyle = node.fillColor;
                     ctx.fill();
                     ctx.lineWidth = 1;
                     ctx.strokeStyle = '#003300';
@@ -206,12 +294,15 @@ export class xFlowCanvas{
         // y = m(0) + b
         // y = b
         var lineYIntercept = offset_b_val + vertLineOffsetY;
-
         return new DOMPoint(vertLineOffsetX, lineYIntercept);
     }
 
     private GetTopBottomIntersection(parentPoint: DOMPoint, rectCenter: DOMPoint, lineOffsetX: number, lineOffsetY: number) : DOMPoint
     {
+        // TODO: vertical lines are not drawn without this
+        if(parentPoint.x == rectCenter.x)
+            return new DOMPoint(rectCenter.x, lineOffsetY);
+
         // begin by offseting both points by the distance of the line
         let parentPointOffset = new DOMPoint(parentPoint.x - lineOffsetX, parentPoint.y - (lineOffsetY));
         let centerPointOffset = new DOMPoint(rectCenter.x - lineOffsetX, rectCenter.y - (lineOffsetY));
@@ -231,7 +322,6 @@ export class xFlowCanvas{
         // 0 - b = mx
         // (0-b)/m = x
         var lineXIntercept = ((0 - offset_b_val) / offsetSlope) + lineOffsetX;
-
         return new DOMPoint(lineXIntercept, lineOffsetY);
     }
     

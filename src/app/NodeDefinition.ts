@@ -1,6 +1,7 @@
 export class NodeDefinition
 {
-    
+    public layoutRow : number | undefined
+
     private _title : string = "";
     public get title() : string {
         return this._title;
@@ -41,6 +42,14 @@ export class NodeDefinition
         this._radii = v;
     }
     
+    private _enableActionButton: boolean = false;
+    public get enableActionButton() : boolean {
+        return this._enableActionButton;
+    }
+    public set enableActionButton(en : boolean) {
+        this._enableActionButton = en;
+    }
+
     constructor(parentIds: Array<string>) {
         this._parentIds = parentIds;
     }

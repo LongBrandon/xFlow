@@ -4,17 +4,16 @@ export class RectNode{
     private _camera: Camera;
     private _locationX = 200;
     private _locationY = 200;
-    public _height = 75;
-    public _width = 125;
+    public height = 75;
+    public width = 125;
 
+    public actionButtonClicked?: (nodeId: string) => void
     
     public get locationX() : number {
-        //return this._locationX + this._camera.PanOffsetX;
         return this._locationX; // camera offset already handled in mosue move below?
     }
 
     public get locationY() : number {
-        //return this._locationY + this._camera.PanOffsetY;
         return this._locationY; // camera offset already handled in mosue move below?
     }
 
@@ -23,6 +22,10 @@ export class RectNode{
 
     public _title: string = "";
     private _fillcolor = "black";
+    public get fillColor() : string {
+        return this._fillcolor;
+    }
+
     private _radii: number = 10;
 
     private _isMoving = false;
@@ -44,17 +47,24 @@ export class RectNode{
     public set parentIds(v : Array<string>) {
         this._parentIds = v;
     }
-
     
     public get centerX() : number {
-        return this._locationX + this._width / 2;
+        return this._locationX + this.width / 2;
     }
 
     public get centerY() : number {
-        return this._locationY + this._height / 2;
+        return this._locationY + this.height / 2;
     }
+
+    // action button
+    private _enableActionButton: boolean;
+    private _actionButtonWidth: number = 15;
+    private _actionButtonHeight: number = 15;
+    private _actionButtonRightMargin: number = 5;
+    private _actionButtonTopMargin: number = 5;
+    private _actionButtonIsDown: boolean = false;
     
-    constructor(id: string, parentIds: Array<string>, locationX: number, locationY: number, title: string, color: string, radii: number, camera: Camera) {
+    constructor(id: string, parentIds: Array<string>, locationX: number, locationY: number, title: string, color: string, radii: number, camera: Camera, enableActionButton: boolean) {
         this._id = id;
         this._parentIds = parentIds
         this._locationX = locationX;
@@ -63,15 +73,30 @@ export class RectNode{
         this._title = title;
         this._radii = radii;
         this._camera = camera;
+        this._enableActionButton = enableActionButton
     }
 
     handleMouseDown(relMouseX : number, relMouseY: number) : void
     {
+        // check if the click inside the action button
+        if(this._enableActionButton)
+        {
+            let actionButtonLoc = this.GetActionButtonLocation();
+            if(relMouseX > actionButtonLoc.x
+                && relMouseX < actionButtonLoc.x + this._actionButtonWidth
+                && relMouseY > actionButtonLoc.y
+                && relMouseY < actionButtonLoc.y + this._actionButtonHeight)
+                {
+                    this._actionButtonIsDown = true;
+                    return; // do not process move
+                }
+        }
+
         // check if click is inside this shape
         if(relMouseX > this._locationX 
-            && relMouseX  < this._locationX + this._width
+            && relMouseX  < this._locationX + this.width
             && relMouseY > this._locationY 
-            && relMouseY < this._locationY + this._height)
+            && relMouseY < this._locationY + this.height)
             {
                 this._isMoving = true;
 
@@ -87,6 +112,17 @@ export class RectNode{
         {
             this._isMoving = false;
         }
+
+        if(this._actionButtonIsDown)
+        {
+            // this is a action button click event
+            if (!this.actionButtonClicked) return
+                this.actionButtonClicked(this.id)
+
+            //this.dispatchEvent(new CustomEvent('ActionButtonClicked', { detail: { nodeId: this.id } }))
+        }
+
+        this._actionButtonIsDown = false;
     }
 
     handleMouseMove(relMouseX : number, relMouseY: number) : void
@@ -105,7 +141,7 @@ export class RectNode{
         canvasCtx.fillStyle = this._fillcolor;
         canvasCtx.strokeStyle = "black";
         canvasCtx.lineWidth = 1;
-        canvasCtx.roundRect(this._locationX, this._locationY, this._width, this._height, this._radii)
+        canvasCtx.roundRect(this._locationX, this._locationY, this.width, this.height, this._radii)
         canvasCtx.fill();
         canvasCtx.stroke();
 
@@ -113,19 +149,50 @@ export class RectNode{
         canvasCtx.fillStyle = "black";
         canvasCtx.font = "12pt Calibri"
 
-        let titleLocY = this._locationY + (this._height/2) + 4;
+        let titleLocY = this._locationY + (this.height/2) + 4;
 
         var textwidth = canvasCtx.measureText(this._title);
 
         let tileLocX = 0;
-        if(textwidth.width < this._width)
+        if(textwidth.width < this.width)
         {
-            tileLocX = this._locationX + ((this._width - textwidth.width) / 2);
+            tileLocX = this._locationX + ((this.width - textwidth.width) / 2);
         }
 
-        canvasCtx.fillText(this._title, tileLocX, titleLocY); // for testing only
+        canvasCtx.fillText(this._title, tileLocX, titleLocY);
+
+        // draw action "button"
+        if(this._enableActionButton)
+        {
+            // let buttLocX = this.locationX + this.width - (this._actionButtonWidth + this._actionButtonRightMargin);
+            // let buttLocY = this.locationY + this._actionButtonTopMargin;
+            let buttLoc = this.GetActionButtonLocation();
+            canvasCtx.beginPath();
+            canvasCtx.fillStyle = this._fillcolor;
+            canvasCtx.strokeStyle = "#414347";
+            canvasCtx.lineWidth = 1;
+            canvasCtx.roundRect(buttLoc.x, buttLoc.y, this._actionButtonWidth, this._actionButtonHeight, 3)
+            canvasCtx.fill();
+            canvasCtx.stroke();
+
+            // draw circle inside button for more flare
+           // let buttLoc = this.GetActionButtonLocation();
+            let actButtCenterX = buttLoc.x + (this._actionButtonWidth / 2)
+            let actButtCenterY = buttLoc.y + (this._actionButtonHeight / 2)
+            canvasCtx.beginPath();
+            canvasCtx.arc(actButtCenterX, actButtCenterY, 3, 0, 2 * Math.PI, false);
+            canvasCtx.lineWidth = 1;
+            canvasCtx.strokeStyle = '#414347';
+            canvasCtx.stroke();
+        }
     }
 
-   
+    private GetActionButtonLocation() : DOMPoint
+    {
+        let buttLocX = this.locationX + this.width - (this._actionButtonWidth + this._actionButtonRightMargin);
+        let buttLocY = this.locationY + this._actionButtonTopMargin;
+
+        return new DOMPoint(buttLocX, buttLocY);
+    }
 }
 

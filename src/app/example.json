@@ -7,7 +7,8 @@
             "3456"
         ],
         "color": "lightGreen",
-        "radii": 180
+        "radii": 180,
+        "enableActionButton": true
     },
     {
         "title": "Larry Monroe",
@@ -55,7 +56,23 @@
         "color": "lightYellow",
         "radii": 10
     }
-
-
-
+    ,
+    {
+        "title": "Bran's Assist",
+        "id": "9998",
+        "parentIds":[
+            "1234"
+        ],
+        "color": "teal",
+        "radii": 10,
+        "enableActionButton": true
+    },
+    {
+        "title": "Billy Bo",
+        "id": "12",
+        "parentIds":[
+        ],
+        "color": "lightGreen",
+        "radii": 180
+    }
 ]
