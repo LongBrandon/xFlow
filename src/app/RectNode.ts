@@ -1,4 +1,5 @@
 import { Camera } from "./Camera";
+import {TextBlock } from "./TextBlock"
 export class RectNode{
 
     private _camera: Camera;
@@ -6,6 +7,10 @@ export class RectNode{
     private _locationY = 200;
     public height = 75;
     public width = 125;
+
+    private _firstRender : boolean = true;
+    private _textBlock: TextBlock;
+    private _textBlockTopOffset: number = 30;
 
     public actionButtonClicked?: (nodeId: string) => void
     
@@ -63,7 +68,7 @@ export class RectNode{
     private _actionButtonRightMargin: number = 5;
     private _actionButtonTopMargin: number = 5;
     private _actionButtonIsDown: boolean = false;
-    
+
     constructor(id: string, parentIds: Array<string>, locationX: number, locationY: number, title: string, color: string, radii: number, camera: Camera, enableActionButton: boolean) {
         this._id = id;
         this._parentIds = parentIds
@@ -74,6 +79,8 @@ export class RectNode{
         this._radii = radii;
         this._camera = camera;
         this._enableActionButton = enableActionButton
+
+        this._textBlock = new TextBlock(this._title, this.width - 10, 12);
     }
 
     handleMouseDown(relMouseX : number, relMouseY: number) : void
@@ -118,8 +125,6 @@ export class RectNode{
             // this is a action button click event
             if (!this.actionButtonClicked) return
                 this.actionButtonClicked(this.id)
-
-            //this.dispatchEvent(new CustomEvent('ActionButtonClicked', { detail: { nodeId: this.id } }))
         }
 
         this._actionButtonIsDown = false;
@@ -136,6 +141,18 @@ export class RectNode{
 
     drawFlowchartElement(canvasCtx: CanvasRenderingContext2D) : void
     {
+        if(this._firstRender)
+        {
+            this._firstRender = false;
+            // we only need to calculate the textblock once
+            this._textBlock.CalculateTextBlock(canvasCtx); 
+        }
+
+        // increase the height of the shape to contain the text
+        if(this._textBlock.textBlockHeight > this.height - this._textBlockTopOffset - 20)
+        {
+            this.height = this._textBlockTopOffset + this._textBlock.textBlockHeight + this._textBlockTopOffset;
+        }
 
         canvasCtx.beginPath();
         canvasCtx.fillStyle = this._fillcolor;
@@ -145,21 +162,9 @@ export class RectNode{
         canvasCtx.fill();
         canvasCtx.stroke();
 
-        canvasCtx.strokeStyle = "black";
-        canvasCtx.fillStyle = "black";
-        canvasCtx.font = "12pt Calibri"
-
-        let titleLocY = this._locationY + (this.height/2) + 4;
-
-        var textwidth = canvasCtx.measureText(this._title);
-
-        let tileLocX = 0;
-        if(textwidth.width < this.width)
-        {
-            tileLocX = this._locationX + ((this.width - textwidth.width) / 2);
-        }
-
-        canvasCtx.fillText(this._title, tileLocX, titleLocY);
+        this._textBlock.location.x = this.locationX + 5;
+        this._textBlock.location.y = this.locationY + this._textBlockTopOffset;
+        this._textBlock.draw(canvasCtx);
 
         // draw action "button"
         if(this._enableActionButton)

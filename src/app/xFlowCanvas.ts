@@ -34,7 +34,6 @@ export class xFlowCanvas{
 
     start(nodeDefinitions: Array<NodeDefinition>) : void
     {
-        //this.performLayout(nodeDefinitions);
         this.performLayout(nodeDefinitions);
 
         // attach click event for each node action button
@@ -73,12 +72,24 @@ export class xFlowCanvas{
                 topNode.layoutRow = 0;
             });
         }
+
+        // if there are any items where all of their parent IDs do not exist, we will add them
+        // to the top row as "topLevelNodes"
+        var remainingItems = nodeDefinitions.filter(function(nd){ return nd.layoutRow == undefined })
+        for(let itemKey in remainingItems)
+        {
+            let item = remainingItems[itemKey];
+            if(!item.parentIds.some(p => nodeDefinitions.some(nd => nd.id == p)))
+            {
+                item.layoutRow = 0;
+            }
+        }
+
         let lastRow = 0;
         // loop until we put a row number on all elements
         while(nodeDefinitions.some(nd => nd.layoutRow === undefined))
         {
             var foundItems = nodeDefinitions.filter(function(nd){ return nd.layoutRow != undefined })
-            // var remainingNodeDefs = nodeDefinitions.filter(function(fn){ return fn.layoutRow === undefined && fn.parentIds.includes(parentItem.id) })
 
             // first check if there are any items with only a single parent
             for(let k in foundItems)
@@ -192,7 +203,7 @@ export class xFlowCanvas{
         if(ctx == null)
             return;
 
-        ctx.clearRect(0,0, this._canvas.width,canvas.height);
+        ctx.clearRect(0,0, this._canvas.width, canvas.height);
         
         // ctx.fillText(this._camera.DebugString, 10,10);
         // ctx.fillText(this._debugString, 10,10);
@@ -207,25 +218,36 @@ export class xFlowCanvas{
             if(node.parentIds.length > 0)
             {
                 node.parentIds.forEach(parentId => {
-                    var parentNode = this._flowNodes.find(function(fn){ return fn.id == parentId }) as RectNode
-                    
+                    var parentNode = this._flowNodes.find(function(fn){ return fn.id == parentId }) as RectNode | undefined
+
                     if(ctx == null)
                         return;
 
-                    var intersectPoint = this.GetNodeIntersectionPoint(parentNode?.centerX, parentNode?.centerY, new DOMRect(node.locationX, node.locationY, node.width, node.height));
-                    ctx?.beginPath();
-                    ctx?.moveTo(parentNode?.centerX, parentNode?.centerY);
-                    ctx?.lineTo(intersectPoint.x, intersectPoint.y);
-                    ctx?.stroke();
+                    // draw arrows only if parent is found
+                    if(parentNode != undefined)
+                    {
+                        var intersectPoint = this.GetNodeIntersectionPoint(parentNode?.centerX, parentNode?.centerY, new DOMRect(node.locationX, node.locationY, node.width, node.height));
+                        ctx?.beginPath();
+                        ctx?.moveTo(parentNode?.centerX, parentNode?.centerY);
+                        ctx?.lineTo(intersectPoint.x, intersectPoint.y);
+                        ctx?.stroke();
 
-                    // as a pointer, draw a circle at the end of the line
-                    ctx.beginPath();
-                    ctx.arc(intersectPoint.x, intersectPoint.y, 10, 0, 2 * Math.PI, false);
-                    ctx.fillStyle = node.fillColor;
-                    ctx.fill();
-                    ctx.lineWidth = 1;
-                    ctx.strokeStyle = '#003300';
-                    ctx.stroke();
+                        let rotation = Math.atan2(intersectPoint.y - parentNode?.centerY, intersectPoint.x - parentNode?.centerX);
+
+                        // draw an error at the end of the lines pointing to the child nodes
+                        ctx.translate(intersectPoint.x, intersectPoint.y)
+                        ctx.rotate(rotation);
+
+                        var path = new Path2D();
+                        path.moveTo(0, 0);
+                        path.lineTo(-10, -5);
+                        path.lineTo(-10, 5);
+                        path.lineTo(0, 0);
+                        ctx.fill(path);
+                        
+                        ctx.rotate(-rotation);
+                        ctx.translate(-intersectPoint.x, -intersectPoint.y)
+                    } // end if parentNode != undefined
                 });
             }
         });

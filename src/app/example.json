@@ -11,14 +11,15 @@
         "enableActionButton": true
     },
     {
-        "title": "Larry Monroe",
+        "title": "S-1-5-21-1004336348-1177238915-682003330-512",
         "id": "2345",
         "parentIds":[
             "4567",
             "7777"
         ],
         "color": "lightblue",
-        "radii": 180
+        "radii": 180,
+        "enableActionButton": true
     },
     {
         "title": "Test Group",
@@ -33,7 +34,6 @@
         "title": "Everyone Group",
         "id": "4567",
         "parentIds":[
-
         ],
         "color": "lightYellow",
         "radii": 10
@@ -42,7 +42,6 @@
         "title": "Cool Guys Group",
         "id": "7777",
         "parentIds":[
-
         ],
         "color": "cyan",
         "radii": 10
@@ -58,7 +57,7 @@
     }
     ,
     {
-        "title": "Bran's Assist",
+        "title": "Brandon's Super Cool Assist",
         "id": "9998",
         "parentIds":[
             "1234"
@@ -71,6 +70,15 @@
         "title": "Billy Bo",
         "id": "12",
         "parentIds":[
+        ],
+        "color": "lightGreen",
+        "radii": 180
+    },
+    {
+        "title": "SomeRidiculouslyLongTitleWithoutAnySpaces",
+        "id": "000001",
+        "parentIds":[
+            "1234"
         ],
         "color": "lightGreen",
         "radii": 180
