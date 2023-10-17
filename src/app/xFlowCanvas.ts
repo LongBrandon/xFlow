@@ -7,6 +7,22 @@ export class xFlowCanvas{
 
     public nodeActionButtonClicked?: (nodeId: string) => void
 
+    private _canvasWidth: number = 300;
+    public get canvasWidth() : number  {
+        return this._canvasWidth;
+    }
+    public set canvasWidth(w : number) {
+        this._canvasWidth = w;
+    }
+
+    private _canvasHeight: number = 300;
+    public get canvasHeight() : number  {
+        return this._canvasHeight;
+    }
+    public set canvasHeight(w : number) {
+        this._canvasHeight = w;
+    }
+
     private canvasRect: DOMRect;
     private _flowNodes: Array<RectNode> = [];
     private _camera : Camera
@@ -193,8 +209,8 @@ export class xFlowCanvas{
 
     private RunMainLoop(canvas: HTMLCanvasElement)
     {
-        this._canvas.width = window.innerWidth - 20;
-        this._canvas.height = window.innerHeight - 100;
+        this._canvas.width = this.canvasWidth;
+        this._canvas.height = this.canvasHeight;
 
         if(this._canvas == null)
             return;
@@ -224,7 +240,8 @@ export class xFlowCanvas{
                         return;
 
                     // draw arrows only if parent is found
-                    if(parentNode != undefined)
+                    // and the parent node is not itself
+                    if(parentNode != undefined && parentNode.id != node.id)
                     {
                         var intersectPoint = this.GetNodeIntersectionPoint(parentNode?.centerX, parentNode?.centerY, new DOMRect(node.locationX, node.locationY, node.width, node.height));
                         ctx?.beginPath();
@@ -238,6 +255,7 @@ export class xFlowCanvas{
                         ctx.translate(intersectPoint.x, intersectPoint.y)
                         ctx.rotate(rotation);
 
+                        ctx.fillStyle = "black";
                         var path = new Path2D();
                         path.moveTo(0, 0);
                         path.lineTo(-10, -5);

@@ -33,9 +33,17 @@ function start()
         // var canvas = <HTMLCanvasElement>($('#xdocCanvas')); // why does this not work?
         var canvas = <HTMLCanvasElement>document.getElementById("xdocCanvas");
 
+
         const nodeDefs = (exampleData as Array<NodeDefinition>)
 
         xFlowCan = new xFlowCanvas(canvas);
+        xFlowCan.canvasWidth = window.innerWidth - 20;
+        xFlowCan.canvasHeight = window.innerHeight - 100;
+
+        window.addEventListener('resize', function(event) {
+            xFlowCan.canvasWidth = window.innerWidth - 20;
+            xFlowCan.canvasHeight = window.innerHeight - 100;
+        }, true);
 
         xFlowCan.nodeActionButtonClicked = HandleNodeAction;
 
