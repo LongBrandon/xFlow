@@ -9,6 +9,14 @@ export class NodeDefinition
     public set title(v : string) {
         this._title = v;
     }
+
+    private _subtext : string | undefined;
+    public get subtext() : string | undefined {
+        return this._subtext;
+    }
+    public set subtext(v : string | undefined) {
+        this._subtext = v;
+    }
     
     private _id : string = "";
     public get id() : string {
@@ -48,6 +56,14 @@ export class NodeDefinition
     }
     public set enableActionButton(en : boolean) {
         this._enableActionButton = en;
+    }
+    
+    private _category : string | undefined;
+    public get category() : string | undefined {
+        return this._category;
+    }
+    public set category(v : string | undefined) {
+        this._category = v;
     }
 
     constructor(parentIds: Array<string>) {

@@ -17,9 +17,9 @@ window.onload = function(e){
     start();
 }
 
-function HandleNodeAction  (nodeId : string) : void {
+function HandleNodeAction  (nodeId : string, category: string | undefined) : void {
     console.log(nodeId);
-    alert("Node Action for ID: " + nodeId);
+    alert("Node Action for ID: " + nodeId + " category = " + category);
 }
 
 function start()

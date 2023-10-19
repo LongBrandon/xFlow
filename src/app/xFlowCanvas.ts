@@ -6,7 +6,7 @@ import { ClusterLayout } from "./Layouts/ClusterLayout"
 
 export class xFlowCanvas{
 
-    public nodeActionButtonClicked?: (nodeId: string) => void
+    public nodeActionButtonClicked?: (nodeId: string, category: string | undefined) => void
 
     private _canvasWidth: number = 300;
     public get canvasWidth() : number  {
@@ -55,7 +55,7 @@ export class xFlowCanvas{
         {
             let nodeCount = 0;
             nodeDefinitions.forEach(node => {
-                this._flowNodes.push(new RectNode(node.id, node.parentIds, 0, nodeCount * 20, node.title, node.color, node.radii, this._camera, node.enableActionButton));
+                this._flowNodes.push(new RectNode(node.id, node.parentIds, 0, nodeCount * 20, node.title, node.color, node.radii, node.enableActionButton, node.subtext, node.category));
             });
         
             let layout = new ClusterLayout(this._flowNodes, this._layoutColumnWidth, this._layoutRowHeight);
@@ -68,18 +68,18 @@ export class xFlowCanvas{
 
         // attach click event for each node action button
         this._flowNodes.forEach(fn => {
-            fn.actionButtonClicked = (id) => this.HandleNodeActionButtonClick(id);
+            fn.actionButtonClicked = (id, cat) => this.HandleNodeActionButtonClick(id, cat);
         });
         this.loop();
     }
 
-    private HandleNodeActionButtonClick(nodeID: string) {
+    private HandleNodeActionButtonClick(nodeID: string, category: string | undefined) {
 
         if (!this.nodeActionButtonClicked)
         {
             return;
         }
-        this.nodeActionButtonClicked(nodeID)
+        this.nodeActionButtonClicked(nodeID, category);
     }
 
     private performLayout(nodeDefinitions: Array<NodeDefinition>)
@@ -169,7 +169,7 @@ export class xFlowCanvas{
             var rowNodes = nodeDefinitions.filter(function(nd){ return nd.layoutRow === i })
             let column = 0;
             rowNodes.forEach(rn => {
-                this._flowNodes.push(new RectNode(rn.id, rn.parentIds, column * this._layoutColumnWidth + marginLeft, i * this._layoutRowHeight + marginTop,  rn.title, rn.color, rn.radii, this._camera, rn.enableActionButton));
+                this._flowNodes.push(new RectNode(rn.id, rn.parentIds, column * this._layoutColumnWidth + marginLeft, i * this._layoutRowHeight + marginTop,  rn.title, rn.color, rn.radii, rn.enableActionButton, rn.subtext, rn.category));
                 column++;
             });
         }

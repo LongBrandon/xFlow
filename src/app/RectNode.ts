@@ -1,8 +1,6 @@
-import { Camera } from "./Camera";
 import {TextBlock } from "./TextBlock"
 export class RectNode{
 
-    private _camera: Camera;
     private _locationX = 200;
     private _locationY = 200;
     public height = 75;
@@ -12,7 +10,7 @@ export class RectNode{
     private _textBlock: TextBlock;
     private _textBlockTopOffset: number = 30;
 
-    public actionButtonClicked?: (nodeId: string) => void
+    public actionButtonClicked?: (nodeId: string, category: string | undefined) => void
     
     public get locationX() : number {
         return this._locationX; // camera offset already handled in mosue move below?
@@ -28,7 +26,6 @@ export class RectNode{
         this._locationY = v;
     }
 
-
     private _clickOffsetX = 0;
     private _clickOffestY = 0;
 
@@ -37,6 +34,12 @@ export class RectNode{
     public get fillColor() : string {
         return this._fillcolor;
     }
+
+    // short text in smaller font near the bottom of the node
+    private _subtext : string | undefined;
+
+    // a string returned in the action button click event
+    private _category: string | undefined;
 
     private _radii: number = 10;
 
@@ -86,7 +89,9 @@ export class RectNode{
     private _actionButtonTopMargin: number = 5;
     private _actionButtonIsDown: boolean = false;
 
-    constructor(id: string, parentIds: Array<string>, locationX: number, locationY: number, title: string, color: string, radii: number, camera: Camera, enableActionButton: boolean) {
+    constructor(id: string, parentIds: Array<string>, locationX: number, locationY: number, title: string, color: string, radii: number, enableActionButton: boolean,
+        subtext: string | undefined, category: string | undefined) {
+
         this._id = id;
         this._parentIds = parentIds
         this._locationX = locationX;
@@ -94,10 +99,12 @@ export class RectNode{
         this._fillcolor = color;
         this._title = title;
         this._radii = radii;
-        this._camera = camera;
         this._enableActionButton = enableActionButton
 
         this._textBlock = new TextBlock(this._title, this.width - 10, 12);
+
+        this._subtext = subtext;
+        this._category = category;
     }
 
     handleMouseDown(relMouseX : number, relMouseY: number) : void
@@ -141,7 +148,7 @@ export class RectNode{
         {
             // this is a action button click event
             if (!this.actionButtonClicked) return
-                this.actionButtonClicked(this.id)
+                this.actionButtonClicked(this.id, this._category)
         }
 
         this._actionButtonIsDown = false;
@@ -179,9 +186,19 @@ export class RectNode{
         canvasCtx.fill();
         canvasCtx.stroke();
 
+        // draw the main text
         this._textBlock.location.x = this.locationX + 5;
         this._textBlock.location.y = this.locationY + this._textBlockTopOffset;
         this._textBlock.draw(canvasCtx);
+
+        // draw the subtext
+        if(this._subtext != undefined)
+        {
+            canvasCtx.fillStyle = "black";
+            canvasCtx.font = '10pt Calibri';
+            let subtextLeftRadiiPad = this._radii / 3;
+            canvasCtx.fillText(this._subtext, this.locationX + 5 + subtextLeftRadiiPad, this._locationY + this.height - 5);
+        }
 
         // draw action "button"
         if(this._enableActionButton)
