@@ -1,6 +1,7 @@
 import { RectNode } from "./RectNode";
 import { Camera } from "./Camera";
 import { NodeDefinition } from "./NodeDefinition";
+import { ClusterLayout } from "./Layouts/ClusterLayout"
 
 
 export class xFlowCanvas{
@@ -27,12 +28,11 @@ export class xFlowCanvas{
     private _flowNodes: Array<RectNode> = [];
     private _camera : Camera
     private _debugString = "";
-    private _debugString2 = "";
     private _wheelValue = 0;
 
     private _canvas : HTMLCanvasElement;
 
-    private _layoutColumnWidth = 200;
+    private _layoutColumnWidth = 250;
     private _layoutRowHeight = 150;
 
     private _currentLayoutRow = 0;
@@ -48,9 +48,23 @@ export class xFlowCanvas{
         canvas.onwheel = (evt) => this.mouseWheel(evt);
     }
 
-    start(nodeDefinitions: Array<NodeDefinition>) : void
+    start(nodeDefinitions: Array<NodeDefinition>, layoutType : string) : void
     {
-        this.performLayout(nodeDefinitions);
+       
+        if(layoutType.toLowerCase() == "clustertree")
+        {
+            let nodeCount = 0;
+            nodeDefinitions.forEach(node => {
+                this._flowNodes.push(new RectNode(node.id, node.parentIds, 0, nodeCount * 20, node.title, node.color, node.radii, this._camera, node.enableActionButton));
+            });
+        
+            let layout = new ClusterLayout(this._flowNodes, this._layoutColumnWidth, this._layoutRowHeight);
+            layout.performLayout();
+        }
+        else
+        {
+             this.performLayout(nodeDefinitions);
+        }
 
         // attach click event for each node action button
         this._flowNodes.forEach(fn => {

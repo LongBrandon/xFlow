@@ -47,6 +47,6 @@ function start()
 
         xFlowCan.nodeActionButtonClicked = HandleNodeAction;
 
-        xFlowCan.start(nodeDefs);
+        xFlowCan.start(nodeDefs, "clusterTree");
     });
 }

@@ -72,6 +72,9 @@ export class TextBlock{
     // calculate the text block size based on the text and max width
     public CalculateTextBlock(ctx : CanvasRenderingContext2D)
     {
+        // set the text size BEFORE measuring text
+        ctx.font = (this._textHeight) + 'pt Calibri';
+
         var words = this._text.split(" ");
 
         var textParts = new Array<string>;

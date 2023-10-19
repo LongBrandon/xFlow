@@ -1,6 +1,6 @@
 export class NodeDefinition
 {
-    public layoutRow : number | undefined
+    public layoutRow : number | undefined;
 
     private _title : string = "";
     public get title() : string {

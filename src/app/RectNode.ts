@@ -17,10 +17,17 @@ export class RectNode{
     public get locationX() : number {
         return this._locationX; // camera offset already handled in mosue move below?
     }
+    public set locationX(v : number) {
+        this._locationX = v;
+    }
 
     public get locationY() : number {
         return this._locationY; // camera offset already handled in mosue move below?
     }
+    public set locationY(v : number) {
+        this._locationY = v;
+    }
+
 
     private _clickOffsetX = 0;
     private _clickOffestY = 0;
@@ -60,6 +67,16 @@ export class RectNode{
     public get centerY() : number {
         return this._locationY + this.height / 2;
     }
+
+    
+    private _layoutRow : number = 0
+    public get layoutRow() : number {
+        return this._layoutRow;
+    }
+    public set layoutRow(v : number ) {
+        this._layoutRow = v;
+    }
+    
 
     // action button
     private _enableActionButton: boolean;
