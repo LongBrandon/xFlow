@@ -1,5 +1,5 @@
-import {TextBlock } from "./TextBlock"
-export class RectNode{
+import { TextBlock } from "./TextBlock"
+export class RectNode {
 
     private _locationX = 200;
     private _locationY = 200;
@@ -169,7 +169,7 @@ export class RectNode{
         {
             this._firstRender = false;
             // we only need to calculate the textblock once
-            this._textBlock.CalculateTextBlock(canvasCtx); 
+            this._textBlock.calculateTextBlock(canvasCtx); 
         }
 
         // increase the height of the shape to contain the text

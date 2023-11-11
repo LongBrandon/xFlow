@@ -1,5 +1,5 @@
-import { NodeDefinition } from "./NodeDefinition";
-import {xFlowCanvas} from "./xFlowCanvas"
+import { NodeDefinition } from "../NodeDefinition";
+import {xFlowCanvas} from "../xFlowCanvas"
 import exampleData from "./example.json";
 
 var $ = require( "jquery" );
