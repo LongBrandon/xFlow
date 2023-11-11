@@ -179,13 +179,13 @@ export class xFlowCanvas{
     private loop = () => {
         this.canvasRect = this._canvas.getBoundingClientRect();
         this.RunMainLoop(this._canvas);
-        this._camera.LoopUpdate()
+        this._camera.loopUpdate()
         requestAnimationFrame(this.loop);
     }
 
     mouseUp(evt: MouseEvent) : void
     {
-        this._camera.HandleMouseUp(evt);
+        this._camera.handleMouseUp(evt);
 
         if(evt.button == 0)
         {
@@ -197,7 +197,7 @@ export class xFlowCanvas{
 
     mouseDown(evt: MouseEvent)
     {
-        this._camera.HandleMouseDown(evt);
+        this._camera.handleMouseDown(evt);
 
         if(evt.button == 0)
         {
@@ -209,7 +209,7 @@ export class xFlowCanvas{
 
     private mouseMove(evt: MouseEvent)
     {
-        this._camera.HandleMouseMove(evt);
+        this._camera.handleMouseMove(evt);
         this._flowNodes.forEach((value) => {
             value.handleMouseMove(this._camera.MouseCamLocationX, this._camera.MouseCamLocationY);
         });
@@ -219,7 +219,7 @@ export class xFlowCanvas{
     {
         this._wheelValue += evt.deltaY
         this._debugString = this._wheelValue.toString();
-        this._camera.HandleMouseWheel(evt);
+        this._camera.handleMouseWheel(evt);
     }
 
     private RunMainLoop(canvas: HTMLCanvasElement)

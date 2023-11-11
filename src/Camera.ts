@@ -1,4 +1,4 @@
-export class Camera{
+export class Camera {
 
     //https://gist.github.com/KennyRedman/50d636b7eb43a01bb61c
 
@@ -27,12 +27,12 @@ export class Camera{
         this.canvasRect = this.canvas.getBoundingClientRect();
     }
 
-    LoopUpdate() : void
+    loopUpdate() : void
     {
         this.canvasRect = this.canvas.getBoundingClientRect();
     }
 
-    HandleMouseDown(evt: MouseEvent)
+    handleMouseDown(evt: MouseEvent)
     {
         if(evt.button == 1) // middle mouse button
         {
@@ -42,7 +42,7 @@ export class Camera{
         }
     }
 
-    HandleMouseUp(evt: MouseEvent)
+    handleMouseUp(evt: MouseEvent)
     {
         if(evt.button == 1)
         {
@@ -56,7 +56,7 @@ export class Camera{
     }
 
 
-    HandleMouseMove(evt: MouseEvent)
+    handleMouseMove(evt: MouseEvent)
     {       
         this.MouseCamLocationX = ((evt.clientX - this.canvasRect.left) / this.Zoom) - this.PanOffsetX;
         this.MouseCamLocationY = ((evt.clientY - this.canvasRect.top) / this.Zoom) - this.PanOffsetY;
@@ -69,7 +69,7 @@ export class Camera{
         }
     }
 
-    HandleMouseWheel(evt: WheelEvent)
+    handleMouseWheel(evt: WheelEvent)
     {
         // get the current location of the mouse,
         // we want to move to this location after zooming
@@ -103,7 +103,7 @@ export class Camera{
         this.Zoom = Math.round(this.Zoom * 1000) / 1000; // round to three decimal places
     }
 
-    transformCanvasContext(ctx : CanvasRenderingContext2D )
+    transformCanvasContext(ctx: CanvasRenderingContext2D)
     {
         ctx.scale(this.Zoom, this.Zoom);
         ctx.translate(this.PanOffsetX + this._currentPanOffsetX, this.PanOffsetY + this._currentPanOffsetY);
