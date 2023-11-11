@@ -49,9 +49,8 @@ export class xFlowCanvas{
         canvas.onwheel = (evt) => this.mouseWheel(evt);
     }
 
-    start(nodeDefinitions: Array<NodeDefinition>, layoutType : string) : void
+    start(nodeDefinitions: Array<NodeDefinition>, layoutType: string) : void
     {
-       
         if(layoutType.toLowerCase() == "clustertree")
         {
             let nodeCount = 0;

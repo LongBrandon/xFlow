@@ -24,11 +24,11 @@ function HandleNodeAction  (nodeId : string, category: string | undefined) : voi
 
 function start()
 {
-    var messagesElement = document.getElementById('messages');
-    messagesElement!.innerText = "Welcome somethings working!";
-    $('#startBtn').click(function(){
+    var messagesElement = document.getElementById('messages')!;
+    messagesElement.innerText = "Welcome somethings working!";
+    $('#startBtn').click(function() {
 
-        messagesElement!.innerText = "button clicked"
+        messagesElement.innerText = "button clicked"
     
         // var canvas = <HTMLCanvasElement>($('#xdocCanvas')); // why does this not work?
         var canvas = <HTMLCanvasElement>document.getElementById("xdocCanvas");
@@ -37,16 +37,19 @@ function start()
         const nodeDefs = (exampleData as Array<NodeDefinition>)
 
         xFlowCan = new xFlowCanvas(canvas);
-        xFlowCan.canvasWidth = window.innerWidth - 20;
-        xFlowCan.canvasHeight = window.innerHeight - 100;
+        setCanvasSize();
 
         window.addEventListener('resize', function(event) {
-            xFlowCan.canvasWidth = window.innerWidth - 20;
-            xFlowCan.canvasHeight = window.innerHeight - 100;
+            setCanvasSize();
         }, true);
 
         xFlowCan.nodeActionButtonClicked = HandleNodeAction;
 
         xFlowCan.start(nodeDefs, "clusterTree");
+
+        function setCanvasSize() {
+            xFlowCan.canvasWidth = window.innerWidth - 20;
+            xFlowCan.canvasHeight = window.innerHeight - 100;
+        }
     });
 }

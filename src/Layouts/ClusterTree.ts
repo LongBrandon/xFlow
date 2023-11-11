@@ -1,4 +1,3 @@
-import { NodeDefinition } from "../NodeDefinition";
 import { RectNode } from "../RectNode";
 
 
