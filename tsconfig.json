@@ -108,6 +108,6 @@
     "module": "CommonJS"
   },
   "files": [
-    "app/app.ts"
+    "src/app/app.ts"
   ]
 }

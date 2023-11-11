@@ -2,6 +2,7 @@ import { RectNode } from "./RectNode";
 import { Camera } from "./Camera";
 import { NodeDefinition } from "./NodeDefinition";
 import { ClusterLayout } from "./Layouts/ClusterLayout"
+import { TextBlock } from "./TextBlock";
 
 
 export class xFlowCanvas{
