@@ -10,7 +10,7 @@ module.exports = function (config) {
 
         // frameworks to use
         // available frameworks: https://www.npmjs.com/search?q=keywords:karma-adapter
-        frameworks: ["jasmine"],
+        frameworks: ["jasmine", "karma-typescript"],
 
 
         // list of files / patterns to load in the browser
@@ -57,7 +57,8 @@ module.exports = function (config) {
 
         // start these browsers
         // available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
-        browsers: ["Chrome", "ChromeHeadless", "Firefox", "Edge"],
+        //browsers: ["Chrome", "ChromeHeadless", "Firefox", "Edge"],
+        browsers: ["Chrome"],
 
 
         // Continuous Integration mode
@@ -66,6 +67,12 @@ module.exports = function (config) {
 
         // Concurrency level
         // how many browser instances should be started simultaneously
-        concurrency: Infinity
+        concurrency: Infinity,
+
+        karmaTypescriptConfig: {
+            bundlerOptions: {
+                transforms: [require("karma-typescript-es6-transform")()]
+            }
+        }
     })
 }
